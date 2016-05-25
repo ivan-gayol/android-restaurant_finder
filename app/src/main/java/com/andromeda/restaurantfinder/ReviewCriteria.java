@@ -1,6 +1,8 @@
 package com.andromeda.restaurantfinder;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -86,9 +88,39 @@ public class ReviewCriteria extends Activity {
      */
     private void handleGetReviews (){
 
+        if (!validate()){
+            return;
+        }
+
         RestaurantFinderApplication application = (RestaurantFinderApplication) getApplication();
         application.setReviewCriteriaCuisine(this.cuisine.getSelectedItem().toString());
         application.setReviewCriteriaLocation(location.toString());
 
+    }
+
+    /**
+     * Validates if the user has entered a location or not
+     * @return <code>true</code> is the user entered a location <code>false</code> otherwise
+     */
+    private boolean validate (){
+        boolean valid = true;
+        StringBuilder validationText = new StringBuilder();
+        if (this.location == null ||
+                this.location.getText().toString().equals("")){
+            validationText.append(R.string.location_not_supplied_message);
+            valid = false;
+        }
+        if (!valid){
+            new AlertDialog.Builder(this).setTitle(R.string.alert_label)
+                    .setMessage(validationText)
+                    .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing, show alert is enough
+                        }
+                    }).show();
+            validationText = null;
+        }
+        return valid;
     }
 }
